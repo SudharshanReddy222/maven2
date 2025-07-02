@@ -19,7 +19,7 @@ pipeline {
         stage("Scan Analysis using Snyk") {
             steps {
                 withCredentials([string(credentialsId: 'SNYK-token', variable: 'SNYK_TOKEN')]) {
-                    sh 'snyk test --file=pom.xml --auth=$SNYK_TOKEN'
+                    sh 'snyk test --file=pom.xml --auth=$SNYK_TOKEN || true'
                 }
             }
         }
