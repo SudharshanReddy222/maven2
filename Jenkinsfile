@@ -6,17 +6,14 @@ pipeline {
     }
 
     stages {
-
-        stage('code quality with sonarqube') {
+        stage('Code Quality with SonarQube') {
             steps {
-                script {
-                    withSonarQubeEnv(installationName: 'sonar-9347' , credentialsId: 'sonar-token' )
-                    sh 'mvn sonar:sonar'
+                withSonarQubeEnv('sonar-9347') {
+                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
+                        sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN'
+                    }
                 }
             }
         }
     }
 }
-
-
-    
