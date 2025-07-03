@@ -10,9 +10,44 @@ pipeline {
         imageName = 'myapp'
         region = 'us-east-1'
         awsCredentialId = 'ecr-credentials'
+        sonarTokenId = 'sonar-token'
+        snykTokenId = 'SNYK-token'
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withCredentials([string(credentialsId: "${sonarTokenId}", variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                            mvn clean verify sonar:sonar \
+                            -Dsonar.projectKey=${imageName} \
+                            -Dsonar.host.url=$SONAR_HOST_URL \
+                            -Dsonar.login=$SONAR_TOKEN
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Snyk Scan') {
+            steps {
+                withCredentials([string(credentialsId: "${snykTokenId}", variable: 'SNYK_TOKEN')]) {
+                    sh '''
+                        npm install snyk -g
+                        snyk auth $SNYK_TOKEN
+                        snyk test || true
+                    '''
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
