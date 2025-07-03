@@ -33,7 +33,7 @@ pipeline {
         stage('Building our image') {
             steps {
                 script {
-                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+                   def dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
                 }
             }
         }
@@ -41,7 +41,7 @@ pipeline {
         stage('Deploy our image') {
             steps {
                 script {
-                    docker.withRegistry("http://${registry}", registryCredentiall) {
+                    docker.withRegistry("http://${registry}", registryCredential) {
                         dockerImage.push()
                     }
                 }
