@@ -8,6 +8,7 @@ pipeline {
     environment {
         registry = '819590942191.dkr.ecr.us-east-1.amazonaws.com/devsecops9347'
         imageName = 'my appc'
+        registryCredential = 'jenkins-ecr'
     }
 
     stages {
@@ -33,6 +34,16 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+                }
+            }
+        }
+
+        stage('Deploy our image') {
+            steps {
+                script {
+                    docker.withRegistry('', registryCredential) {
+                        dockerImage.push()
+                    }
                 }
             }
         }
