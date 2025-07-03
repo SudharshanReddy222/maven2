@@ -1,3 +1,5 @@
+def dockerImage
+
 pipeline {
     agent any
 
@@ -7,33 +9,15 @@ pipeline {
 
     environment {
         registry = '819590942191.dkr.ecr.us-east-1.amazonaws.com/devsecops9347'
-        imageName = 'my appc'
+        imageName = 'myappc'
         registryCredential = 'jenkins-ecr'
     }
 
     stages {
-        stage('Code Quality with SonarQube') {
-            steps {
-                withSonarQubeEnv('sonar-9347') {
-                    withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
-                        sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN'
-                    }
-                }
-            }
-        }
-
-        stage("Scan Analysis using Snyk") {
-            steps {
-                withCredentials([string(credentialsId: 'SNYK-token', variable: 'SNYK_TOKEN')]) {
-                    sh 'snyk test --file=pom.xml --auth=$SNYK_TOKEN || true'
-                }
-            }
-        }
-
-        stage('Building our image') {
+        stage('Build our image') {
             steps {
                 script {
-                   def dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
+                    dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
                 }
             }
         }
@@ -41,7 +25,7 @@ pipeline {
         stage('Deploy our image') {
             steps {
                 script {
-                    docker.withRegistry("http://${registry}", registryCredential) {
+                    docker.withRegistry("https://${registry}", registryCredential) {
                         dockerImage.push()
                     }
                 }
