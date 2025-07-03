@@ -15,9 +15,7 @@ pipeline {
         stage('Build our image') {
             steps {
                 script {
-                    // ✅ Declare variable with `def`
                     def dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
-                    // ✅ Save to environment for next stage
                     env.IMAGE_TAG = "${registry}:${BUILD_NUMBER}"
                 }
             }
@@ -26,8 +24,7 @@ pipeline {
         stage('Deploy our image') {
             steps {
                 script {
-                    // ✅ Push using the same tag
-                    docker.withRegistry("https://${registry}", registryCredential) {
+                    docker.withRegistry("https://${env.registry}", env.registryCredential) {
                         docker.image(env.IMAGE_TAG).push()
                     }
                 }
