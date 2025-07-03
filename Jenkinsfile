@@ -1,4 +1,4 @@
-def dockerImage
+
 
 pipeline {
     agent any
@@ -10,7 +10,7 @@ pipeline {
     environment {
         registry = '819590942191.dkr.ecr.us-east-1.amazonaws.com/devsecops9347'
         imageName = 'myappc'
-        registryCredential = 'jenkins-ecr'
+        registryCredential = 'ecr-credentials'
     }
 
     stages {
