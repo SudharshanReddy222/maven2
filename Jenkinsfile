@@ -6,7 +6,8 @@ pipeline {
     }
 
     environment {
-        registry = 819590942191.dkr.ecr.us-east-1.amazonaws.com/devsecops9347
+        registry = '819590942191.dkr.ecr.us-east-1.amazonaws.com/devsecops9347'
+        imageName = 'my appc'
     }
 
     stages {
