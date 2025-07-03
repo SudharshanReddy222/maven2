@@ -7,24 +7,26 @@ pipeline {
 
     environment {
         registry = '819590942191.dkr.ecr.us-east-1.amazonaws.com/devsecops9347'
-        imageName = 'myappc'
-        registryCredential = 'ecr-credentials'
+        imageName = 'myapp'
+        region = 'us-east-1'
+        awsCredentialId = 'ecr-credentials'
     }
 
     stages {
-        stage('Build our image') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerImage = docker.build("${registry}:${BUILD_NUMBER}")
-                    env.IMAGE_TAG = "${registry}:${BUILD_NUMBER}"
+                    def tag = "${env.registry}:${BUILD_NUMBER}"
+                    docker.build(tag)
+                    env.IMAGE_TAG = tag
                 }
             }
         }
 
-        stage('Deploy our image') {
+        stage('Push to ECR') {
             steps {
                 script {
-                    docker.withRegistry("https://${env.registry}", env.registryCredential) {
+                    docker.withRegistry("https://${env.registry}", "ecr:${env.region}:${env.awsCredentialId}") {
                         docker.image(env.IMAGE_TAG).push()
                     }
                 }
