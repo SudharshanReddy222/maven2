@@ -59,7 +59,7 @@ pipeline {
                         aws eks update-kubeconfig --region $region --name eksdemo2
 
                         echo "Applying Kubernetes manifests..."
-                        kubectl apply -f deployment.yml
+                        kubectl apply -f spring-boot-deployment.yaml
                         
                     '''
                 }
