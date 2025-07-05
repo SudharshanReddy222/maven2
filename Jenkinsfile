@@ -26,7 +26,6 @@ pipeline {
         stage("Scan Analysis using Snyk") {
             steps {
                 withCredentials([string(credentialsId: 'SNYK-token', variable: 'SNYK_TOKEN')]) {
-                    
                     sh 'snyk test --file=pom.xml --auth=$SNYK_TOKEN || true'
                 }
             }
@@ -48,6 +47,21 @@ pipeline {
                     docker.withRegistry("https://${env.registry}", "ecr:${env.region}:${env.awsCredentialId}") {
                         docker.image(env.IMAGE_TAG).push()
                     }
+                }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                script {
+                    sh '''
+                        echo "Updating kubeconfig to connect to EKS..."
+                        aws eks update-kubeconfig --region $region --name eksdemo2
+
+                        echo "Applying Kubernetes manifests..."
+                        kubectl apply -f deployment.yml
+                        
+                    '''
                 }
             }
         }
