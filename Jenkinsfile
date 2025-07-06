@@ -1,5 +1,3 @@
-
-
 pipeline {
     agent any
 
@@ -25,7 +23,7 @@ pipeline {
             }
         }
 
-        stage("Scan Analysis using Snyk") {
+        stage('Scan Analysis using Snyk') {
             steps {
                 withCredentials([string(credentialsId: 'SNYK-token', variable: 'SNYK_TOKEN')]) {
                     sh 'snyk test --file=pom.xml --auth=$SNYK_TOKEN || true'
@@ -68,16 +66,14 @@ pipeline {
         stage('Run ZAP Scan') {
             steps {
                 script {
-                    def targetUrl = 'http://3.89.201.145:30038'
-
                     sh '''
                         echo "Sleeping 40 seconds to wait for app startup..."
                         sleep 40
-                        echo "Running ZAP Baseline Scan on ${targetUrl}"
+                        echo "Running ZAP Baseline Scan on http://3.89.201.145:30038"
 
-                        docker run --rm --user $(id -u):$(id -g) -v \$(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \\
-                            -t ${targetUrl} \\
-                            -r zap_report.html \\
+                        docker run --rm --user $(id -u):$(id -g) -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+                            -t http://3.89.201.145:30038 \
+                            -r zap_report.html \
                             -n -I
                     '''
                 }
