@@ -56,16 +56,13 @@ pipeline {
                 script {
                     sh '''
                         echo "Authenticating to EKS and applying deployment..."
-                        
-                        # Generate token
                         export TOKEN=$(aws eks get-token --region $region --cluster-name eksdemo2 --output json | jq -r '.status.token')
-
-                        # Apply manifest using token
-                        kubectl --token=$TOKEN apply -f spring-boot-deployment.yaml
+                        
+                        kubectl --token=$TOKEN apply --validate=false -f spring-boot-deployment.yaml
                     '''
                 }
             }
         }
-    }
+    } 
 }
 
