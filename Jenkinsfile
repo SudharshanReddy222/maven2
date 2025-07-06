@@ -73,7 +73,7 @@ pipeline {
                         sleep 40
                         echo "Running ZAP Baseline Scan on ${targetUrl}"
 
-                        docker run --rm -v \$(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \\
+                        docker run --rm --user $(id -u):$(id -g) -v \$(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \\
                             -t ${targetUrl} \\
                             -r zap_report.html \\
                             -n -I
