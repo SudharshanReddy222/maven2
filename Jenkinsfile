@@ -55,15 +55,17 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "Updating kubeconfig to connect to EKS..."
-                        aws eks update-kubeconfig --region $region --name eksdemo2
-
-                        echo "Applying Kubernetes manifests..."
-                        kubectl apply -f spring-boot-deployment.yaml
+                        echo "Authenticating to EKS and applying deployment..."
                         
+                        # Generate token
+                        export TOKEN=$(aws eks get-token --region $region --cluster-name eksdemo2 --output json | jq -r '.status.token')
+
+                        # Apply manifest using token
+                        kubectl --token=$TOKEN apply -f spring-boot-deployment.yaml
                     '''
                 }
             }
         }
     }
 }
+
