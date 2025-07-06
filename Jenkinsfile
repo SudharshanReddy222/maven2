@@ -1,3 +1,5 @@
+
+
 pipeline {
     agent any
 
@@ -79,11 +81,8 @@ pipeline {
                             -n -I
                     """
                 }
-            }
-
                 archiveArtifacts artifacts: 'zap_report.html', allowEmptyArchive: true
+            }
         }
     }
 }
-
-
