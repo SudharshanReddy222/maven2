@@ -70,7 +70,7 @@ pipeline {
                 script {
                     def targetUrl = 'http://3.89.201.145:30038'
 
-                    sh """
+                    sh '''
                         echo "Sleeping 40 seconds to wait for app startup..."
                         sleep 40
                         echo "Running ZAP Baseline Scan on ${targetUrl}"
@@ -79,7 +79,7 @@ pipeline {
                             -t ${targetUrl} \\
                             -r zap_report.html \\
                             -n -I
-                    """
+                    '''
                 }
                 archiveArtifacts artifacts: 'zap_report.html', allowEmptyArchive: true
             }
