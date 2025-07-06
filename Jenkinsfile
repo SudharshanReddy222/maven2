@@ -57,13 +57,33 @@ pipeline {
                     sh '''
                         echo "Deploying app to EKS..."
 
-                        # Make sure KUBECONFIG is set and has access
+                        
                         aws eks update-kubeconfig --region $region --name eksdemo2
 
-                        # Apply deployment YAML
+                    
                         kubectl apply -f spring-boot-deployment.yaml
                     '''
                 }
+            }
+        }
+
+        stage('Run ZAP Scan') {
+            steps {
+                script {
+                    def targetUrl = 'http://3.89.201.145:30038'
+
+                    sh """
+                        echo "Running ZAP Baseline Scan on ${targetUrl}"
+
+                        docker run --rm -v \$(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py \\
+                            -t ${targetUrl} \\
+                            -r zap_report.html \\
+                            -n -I
+                    """
+                }
+
+                // Archive the ZAP report for review
+                archiveArtifacts artifacts: 'zap_report.html', allowEmptyArchive: true
             }
         }
     }
