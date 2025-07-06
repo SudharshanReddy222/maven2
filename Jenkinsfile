@@ -55,14 +55,16 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        echo "Authenticating to EKS and applying deployment..."
-                        export TOKEN=$(aws eks get-token --region $region --cluster-name eksdemo2 --output json | jq -r '.status.token')
-                        
-                        kubectl --token=$TOKEN apply --validate=false -f spring-boot-deployment.yaml
+                        echo "Deploying app to EKS..."
+
+                        # Make sure KUBECONFIG is set and has access
+                        aws eks update-kubeconfig --region $region --name eksdemo2
+
+                        # Apply deployment YAML
+                        kubectl apply -f spring-boot-deployment.yaml
                     '''
                 }
             }
         }
-    } 
+    }
 }
-
