@@ -75,8 +75,6 @@ pipeline {
                     sh """
                         echo "Sleeping 40 seconds to wait for app startup..."
                         sleep 40
-                        echo "Pulling OWASP ZAP image..."
-                        docker pull docker.io/owasp/zap2docker-stable
                         echo "Running ZAP Baseline Scan on ${targetUrl}"
 
                         docker run --rm -v \$(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py \\
