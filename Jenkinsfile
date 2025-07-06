@@ -71,7 +71,7 @@ pipeline {
                         sleep 40
                         echo "Running ZAP Baseline Scan on http://3.89.201.145:30038"
 
-                        docker run --rm --user $(id -u):$(id -g) -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+                        docker run --rm --user $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
                             -t http://3.89.201.145:30038 \
                             -r zap_report.html \
                             -n -I
