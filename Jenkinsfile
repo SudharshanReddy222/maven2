@@ -56,11 +56,7 @@ pipeline {
                 script {
                     sh '''
                         echo "Deploying app to EKS..."
-
-                        
                         aws eks update-kubeconfig --region $region --name eksdemo2
-
-                    
                         kubectl apply -f spring-boot-deployment.yaml
                     '''
                 }
@@ -77,16 +73,16 @@ pipeline {
                         sleep 40
                         echo "Running ZAP Baseline Scan on ${targetUrl}"
 
-                        docker run --rm -v \$(pwd):/zap/wrk/:rw -t owasp/zap2docker-stable zap-baseline.py \\
+                        docker run --rm -v \$(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \\
                             -t ${targetUrl} \\
                             -r zap_report.html \\
                             -n -I
                     """
                 }
 
-                // Archive the ZAP report for review
                 archiveArtifacts artifacts: 'zap_report.html', allowEmptyArchive: true
             }
         }
     }
 }
+
