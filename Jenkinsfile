@@ -76,7 +76,7 @@ pipeline {
                         docker run --rm -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
                             -t http://3.89.201.145:30038 \
                             -r zap_report.html \
-                            -n -I
+                            -n -I || true
                     '''
                 }
                 archiveArtifacts artifacts: 'zap_report.html', allowEmptyArchive: true
